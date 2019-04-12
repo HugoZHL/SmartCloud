@@ -6,11 +6,14 @@ app = Flask(__name__)
 @app.route("/")
 def homepage():
     error = None
+    if request.method == 'POST':
+        # error = valid_login(request.form['account'], request.form['password'])
+        if not error:
+            resp = make_response(redirect('/index'))
+            resp.set_cookie('account', request.form['account'], max_age=3600)
+            return resp
     resp = make_response(render_template("homepage.html", error=error))
-    # resp.set_cookie('username', '', max_age=0)
-    # resp.set_cookie('userID', '', max_age=0)
-    # resp.set_cookie('is_admin', '', max_age=0)
-    # resp.set_cookie('is_master', '', max_age=0)
+    resp.set_cookie('account', '', max_age=0)
     return resp
 
 # @app.route("/login", methods=['POST', 'GET'])
