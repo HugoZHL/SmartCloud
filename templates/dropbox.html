@@ -38,7 +38,7 @@
 
 <body>
 
-<div id="myModalNewFolder" class="modal fade" tabindex="-1" role="dialog"\
+<div id="myModalNaming" class="modal fade" tabindex="-1" role="dialog"\
      aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -48,10 +48,10 @@
                 </button>
             </div>
             <form method="post"\
-                  action="{{ url_for('new_folder') }}">
+                  action="">
                 <div class="modal-body">
-                    <p>Naming new folder:</p>
-                    <input name="new_folder" type="text" class="form-control"\
+                    <p>  </p>
+                    <input name="naming" type="text" class="form-control"\
                            oninput = "value=value.replace(/[^_a-zA-Z0-9]/g,'')"\
                            placeholder="File/Dir Name" required autofocus/>
                 </div>
@@ -67,6 +67,7 @@
         </div>
     </div>
 </div>
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -81,12 +82,10 @@
             <div class="navbar-brand">User: {{ account }}</div>
             <a class="navbar-brand" href="{{ url_for('dropbox', path=':root') }}">RootDir</a>
             {% if not searching %}
-            <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalNewFolder" data-file=""\
-               data-path="{{ url_for('new_folder') }}">
+            <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalNaming"\
+               data-title="Naming new folder:" data-path="{{ url_for('new_folder') }}">
                 NewFolder
             </a>
-
-
             <a class="navbar-brand" href="#">NewFile</a>
             {% endif %}
             <a class="navbar-brand" href="{{ url_for('homepage') }}">SignOut</a>
@@ -135,7 +134,7 @@
             <hr/>
             {% for file in files %}
             {% if searching %}
-            Path: {{ file['folder']+file['name'] }}
+            <h4>Path: {{ file['folder']+file['name'] }}</h4>
             {% endif %}
             <div class="row">
                 <div class="col-md-3">
@@ -143,10 +142,8 @@
                         <div class="col-md-2">
                             {% if file['type'] == 'dir' %}
                             {% if searching %}
-                            <a href="{{ url_for('dropbox', path=file['name']) }}">
-                                <img src="{{ url_for('static', filename='images/folder.png') }}"\
-                                     height="27" width="27"/>
-                            </a>
+                            <img src="{{ url_for('static', filename='images/folder.png') }}"\
+                                 height="27" width="27"/>
                             {% else %}
                             <a href="{{ url_for('dropbox', path=file['name']) }}">
                                 <img src="{{ url_for('static', filename='images/folder.png') }}"\
@@ -183,43 +180,12 @@
                             </a>
                         </div>
                         <div class="col-md-4">
-                            <a href="#" data-toggle="modal" data-target="#myModalRename"\
-                               data-file="Renaming file/dir '{{ file['name'] }}' into:"\
+                            <a href="#" data-toggle="modal" data-target="#myModalNaming"\
+                               data-title="Renaming file/dir '{{ file['name'] }}' into:"\
                                data-path="{{ url_for('rename_file', path=file['name']) }}">
                                 <img src="{{ url_for('static', filename='images/rename.png') }}"\
                                      height="25" width="25"/>
                             </a>
-
-                            <div id="myModalRename" class="modal fade" tabindex="-1" role="dialog"\
-                                 aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                            </button>
-                                        </div>
-                                        <form method="post"\
-                                              action="">
-                                            <div class="modal-body">
-                                                <p>Renaming "" into:</p>
-                                                <input name="renaming" type="text" class="form-control"\
-                                                       oninput = "value=value.replace(/[^_a-zA-Z0-9]/g,'')"\
-                                                       placeholder="File/Dir Name" required autofocus/>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">
-                                                    Save
-                                                </button>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                    Close
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                         <div class="col-md-4">
                             <a href="{{ url_for('delete_file', path=file['name']) }}"\
@@ -244,12 +210,12 @@
 </div>
 
 <script type="text/javascript">
-    $('#myModalRename').on('show.bs.modal', function(event) {
+    $('#myModalNaming').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget)
         var url = button.data('path')
-        var file = button.data('file')
+        var title = button.data('title')
         var modal = $(this)
-        modal.find('.modal-body p').text(file)
+        modal.find('.modal-body p').text(title)
         modal.find('.modal-content').find('form').attr("action", url)
     })
 </script>

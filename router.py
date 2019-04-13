@@ -47,7 +47,7 @@ def dropbox(path=None):
 
 @app.route("/new_folder", methods=['POST'])
 def new_folder():
-    folder_name = request.form['new_folder']
+    folder_name = request.form['naming']
     print('Make new folder: '+folder_name)
     make_new_folder(request.cookies['account'], request.cookies['filepath'], folder_name)
     return redirect('/dropbox')
@@ -56,7 +56,7 @@ def new_folder():
 @app.route("/rename_file/<path>", methods=['POST'])
 def rename_file(path):
     path = '/'+path
-    target = request.form['renaming']
+    target = request.form['naming']
     print('rename '+path+' to '+target)
     rename_at_server(request.cookies['account'], path, target)
     return redirect('/dropbox')
