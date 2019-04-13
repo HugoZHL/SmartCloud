@@ -12,6 +12,8 @@
 
     <title>SmartCloud Dropbox</title>
 
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" >
 
@@ -21,17 +23,47 @@
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/jumbotron.css') }}">
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+
+
 </head>
 
 <body>
+
+<div id="myModalNewFolder" class="modal fade" tabindex="-1" role="dialog"\
+     aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post"\
+                  action="{{ url_for('new_folder') }}">
+                <div class="modal-body">
+                    <p>Naming new folder:</p>
+                    <input name="new_folder" type="text" class="form-control"\
+                           oninput = "value=value.replace(/[^_a-zA-Z0-9]/g,'')"\
+                           placeholder="File/Dir Name" required autofocus/>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        Save
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -45,8 +77,14 @@
             <div class="navbar-brand">SmartCloud</div>
             <div class="navbar-brand">User: {{ account }}</div>
             <a class="navbar-brand" href="{{ url_for('dropbox', path=':root') }}">RootDir</a>
-            <a class="navbar-brand" href="#">NewFolder</a>
+            {% if not searching %}
+            <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalNewFolder">
+                NewFolder
+            </a>
+
+
             <a class="navbar-brand" href="#">NewFile</a>
+            {% endif %}
             <a class="navbar-brand" href="{{ url_for('homepage') }}">SignOut</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -99,7 +137,7 @@
                         <div class="col-md-2">
                             {% if file['type'] == 'dir' %}
                             {% if searching %}
-                            <a href="{{ url_for('dropbox', path=file['folder'][1:]+file['name']) }}">
+                            <a href="{{ url_for('dropbox', path=file['name']) }}">
                                 <img src="{{ url_for('static', filename='images/folder.png') }}"\
                                      height="27" width="27"/>
                             </a>
@@ -138,13 +176,47 @@
                             </a>
                         </div>
                         <div class="col-md-4">
-                            <a href="#">
+                            <a href="#" data-toggle="modal" data-target="#myModalRename"\
+                               data-file="{{ file['name'] }}"\
+                               data-path="{{ url_for('rename_file', path=file['name']) }}">
                                 <img src="{{ url_for('static', filename='images/rename.png') }}"\
                                      height="25" width="25"/>
                             </a>
+
+                            <div id="myModalRename" class="modal fade" tabindex="-1" role="dialog"\
+                                 aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        <form method="post"\
+                                              action="">
+                                            <div class="modal-body">
+                                                <p>Renaming "" into:</p>
+                                                <input name="renaming" type="text" class="form-control"\
+                                                       oninput = "value=value.replace(/[^_a-zA-Z0-9]/g,'')"\
+                                                       placeholder="File/Dir Name" required autofocus/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">
+                                                    Save
+                                                </button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    Close
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="col-md-4">
-                            <a href="{{ url_for('delete_file', path=file['name']) }}">
+                            <a href="{{ url_for('delete_file', path=file['name']) }}"\
+                               onclick="return window.confirm('Are you sure to delete file/dir: {{ file['name'] }} ?')">
                                 <img src="{{ url_for('static', filename='images/delete.png') }}"\
                                      height="25" width="25"/>
                             </a>
@@ -163,6 +235,16 @@
     </footer>
 </div>
 
+<script type="text/javascript">
+    $('#myModalRename').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget)
+        var url = button.data('path')
+        var file = button.data('file')
+        var modal = $(this)
+        modal.find('.modal-body p').text('Renaming file/dir "'+file+'" into:')
+        modal.find('.modal-content').find('form').attr("action", url)
+    })
+</script>
 
 </body>
 </html>

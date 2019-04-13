@@ -52,6 +52,15 @@ def search_files(account: str, search: str) -> 'list[dict{}]':
     return files
 
 
-def delete_from_server(filepath: str) -> 'None':
+def make_new_folder(account: str, filepath: str, new_folder: str) -> 'None':
+    pass
+
+
+# 将filepath的文件（夹）名字改成target
+def rename_at_server(account: str, filepath: str, target: str) -> 'None':
+    pass
+
+
+def delete_from_server(account: str, filepath: str) -> 'None':
     # do some deletion
     pass
