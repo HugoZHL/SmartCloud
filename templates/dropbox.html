@@ -23,6 +23,9 @@
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/jumbotron.css') }}">
 
+        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -78,7 +81,8 @@
             <div class="navbar-brand">User: {{ account }}</div>
             <a class="navbar-brand" href="{{ url_for('dropbox', path=':root') }}">RootDir</a>
             {% if not searching %}
-            <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalNewFolder">
+            <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalNewFolder" data-file=""\
+               data-path="{{ url_for('new_folder') }}">
                 NewFolder
             </a>
 
@@ -122,9 +126,11 @@
                 <div class="col-md-3">
                     <p>Last Modified</p>
                 </div>
+                {% if not searching %}
                 <div class="col-md-2">
                     <p>Operations</p>
                 </div>
+                {% endif %}
             </div>
             <hr/>
             {% for file in files %}
@@ -167,6 +173,7 @@
                 <div class="col-md-3">
                     <p>{{ file['time'] }}</p>
                 </div>
+                {% if not searching %}
                 <div class="col-md-2">
                     <div class="row">
                         <div class="col-md-4">
@@ -177,7 +184,7 @@
                         </div>
                         <div class="col-md-4">
                             <a href="#" data-toggle="modal" data-target="#myModalRename"\
-                               data-file="{{ file['name'] }}"\
+                               data-file="Renaming file/dir '{{ file['name'] }}' into:"\
                                data-path="{{ url_for('rename_file', path=file['name']) }}">
                                 <img src="{{ url_for('static', filename='images/rename.png') }}"\
                                      height="25" width="25"/>
@@ -223,6 +230,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -241,7 +249,7 @@
         var url = button.data('path')
         var file = button.data('file')
         var modal = $(this)
-        modal.find('.modal-body p').text('Renaming file/dir "'+file+'" into:')
+        modal.find('.modal-body p').text(file)
         modal.find('.modal-content').find('form').attr("action", url)
     })
 </script>
