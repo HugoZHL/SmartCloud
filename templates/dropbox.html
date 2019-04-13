@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)https://v3.bootcss.com/examples/jumbotron/ -->
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="SmartCloud Dropbox">
+    <meta name="author" content="Hugo Z">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+
+    <title>SmartCloud Dropbox</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" >
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ie10-viewport-bug-workaround.css') }}" >
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jumbotron.css') }}">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"\
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-brand">SmartCloud</div>
+            <div class="navbar-brand">User: {{ account }}</div>
+            <a class="navbar-brand" href="{{ url_for('dropbox', path=':root') }}">RootDir</a>
+            <a class="navbar-brand" href="#">NewFolder</a>
+            <a class="navbar-brand" href="#">NewFile</a>
+            <a class="navbar-brand" href="{{ url_for('homepage') }}">SignOut</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search File..." name="searching" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="container" style="margin-top:1vw">
+    <div class="jumbotron">
+        <div class="container" >
+            <h2>
+                {% if searching %}
+                Search for: {{ searching }}
+                {% else %}
+                Path: {{ filepath }}
+                {% endif %}
+            </h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <p>Name</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Type</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Size</p>
+                </div>
+                <div class="col-md-3">
+                    <p>Last Modified</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Operations</p>
+                </div>
+            </div>
+            <hr/>
+            {% for file in files %}
+            {% if searching %}
+            Path: {{ file['folder']+file['name'] }}
+            {% endif %}
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-2">
+                            {% if file['type'] == 'dir' %}
+                            {% if searching %}
+                            <a href="{{ url_for('dropbox', path=file['folder'][1:]+file['name']) }}">
+                                <img src="{{ url_for('static', filename='images/folder.png') }}"\
+                                     height="27" width="27"/>
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('dropbox', path=file['name']) }}">
+                                <img src="{{ url_for('static', filename='images/folder.png') }}"\
+                                     height="27" width="27"/>
+                            </a>
+                            {% endif %}
+
+                            {% else %}
+                            <img src="{{ url_for('static', filename='images/file.png') }}"\
+                                 height="27" width="27"/>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <p>{{ file['name'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <p>{{ file['type'] }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>{{ file['size'] }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p>{{ file['time'] }}</p>
+                </div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="{{ url_for('homepage') }}">
+                                <img src="{{ url_for('static', filename='images/download.png') }}"\
+                                     height="25" width="27"/>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="#">
+                                <img src="{{ url_for('static', filename='images/rename.png') }}"\
+                                     height="25" width="25"/>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ url_for('delete_file', path=file['name']) }}">
+                                <img src="{{ url_for('static', filename='images/delete.png') }}"\
+                                     height="25" width="25"/>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr/>
+
+    <footer>
+        <p>Copyright © Team of Network Course; Credit to: Hugo Zhang, Chaofan Yang, Rundi Wu.</p>
+    </footer>
+</div>
+
+
+</body>
+</html>

@@ -4,46 +4,53 @@ from util import *
 app = Flask(__name__)
 
 
-@app.route("/")
+def join_path(root, file):
+    return root.rstrip('/')+'/'+file
+
+
+@app.route("/", methods=['GET', 'POST'])
 def homepage():
     error = None
     if request.method == 'POST':
-        # error = valid_login(request.form['account'], request.form['password'])
+        error = valid_login(request.form['account'], request.form['password'])
         if not error:
-            resp = make_response(redirect('/index'))
+            resp = make_response(redirect('/dropbox'))
             resp.set_cookie('account', request.form['account'], max_age=3600)
+            resp.set_cookie('filepath', '/')
             return resp
-    resp = make_response(render_template("homepage.html", error=error))
+    resp = make_response(render_template('homepage.html', error=error))
     resp.set_cookie('account', '', max_age=0)
+    resp.set_cookie('filepath', '')
     return resp
 
-# @app.route("/login", methods=['POST', 'GET'])
-# def login():
-#     error = None
-#     if request.method == 'POST':
-#         error, is_admin, is_master, userID = valid_login(request.form['account'], request.form['password'])
-#         if not error:
-#             resp = make_response(redirect('/sections'))
-#             resp.set_cookie('username', request.form['account'], max_age=3600)
-#             resp.set_cookie('userID', str(userID), max_age=3600)
-#             resp.set_cookie('is_admin', str(is_admin), max_age=3600)
-#             resp.set_cookie('is_master', str(','.join(is_master)), max_age=3600)
-#             return resp
-#     return render_template("login.html", error=error)
 
-# @app.route("/register", methods=['POST', 'GET'])
-# def register():
-#     error = None
-#     if request.method == 'POST':
-#         userID, account, error = valid_register(request)
-#         if not error:
-#             resp = make_response(redirect('/sections'))
-#             resp.set_cookie('username', request.form['username'], max_age=3600)
-#             resp.set_cookie('userID', str(userID), max_age=3600)
-#             resp.set_cookie('is_admin', 'false', max_age=3600)
-#             resp.set_cookie('is_master', '', max_age=3600)
-#             return resp
-#     return render_template("register.html", error=error)
+@app.route("/dropbox", methods=['GET', 'POST'])
+@app.route("/dropbox/<path>", methods=['GET', 'POST'])
+def dropbox(path=None):
+    searching = None
+    account = request.cookies['account']
+    if request.method == 'POST':
+        searching = request.form['searching']
+        files = search_files(account, searching)
+        filepath = '/'
+    else:
+        filepath = request.cookies['filepath']
+        if path:
+            filepath = '/' if path == ':root' else join_path(filepath, path)
+        files = get_files(account, filepath)
+    resp = make_response(render_template('dropbox.html', account=account, filepath=filepath,\
+                                         files=files, searching=searching))
+    resp.set_cookie('filepath', filepath)
+    print(account, filepath)
+    return resp
+
+@app.route("/delete_file/<path>")
+def delete_file(path):
+    filepath = join_path(request.cookies['filepath'], path)
+    print('delete'+filepath)
+    delete_from_server(filepath)
+    return redirect('/dropbox')
+
 #
 # @app.route("/sections", methods=['POST', 'GET'])
 # def show_all_sections():
