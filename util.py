@@ -3,12 +3,14 @@ import os
 import json
 import time
 import shutil
+import hashlib
 
 # System root directory
 # make sure file operations needs no 'sudo' under this directory
 # keep last character be '/'
-ROOT_DIR = '/home/admin/'    # FIXME : change this if necessary
+ROOT_DIR = '/home'    # FIXME : change this if necessary
 UCONFIG_PATH = os.path.join(ROOT_DIR, 'uconfig.json')
+
 
 
 ####################################################################
@@ -22,14 +24,17 @@ def valid_login(account: str, password: str) -> 'str' or None:
     :param password: str. Account password.
     :return: None or str. None if valid else error message.
     """
-    uconfig = json.load(UCONFIG_PATH)   # uconfig are username-hash(password) pairs
+    with open(UCONFIG_PATH, 'r') as f:
+        uconfig = json.load(f)   # uconfig are username-hash(password) pairs
 
     # account name not found
     if account not in uconfig.keys():
         return 'Username or password not correct.'
 
     # password not correct
-    if uconfig[account] != hash(password):
+    hashstr = hashlib.md5()
+    hashstr.update(password.encode('utf-8'))
+    if uconfig[account] != hashstr.hexdigest():
         return 'Username or password not correct.'
 
     return None
@@ -43,16 +48,23 @@ def register(account: str, password: str) -> 'str' or None:
     :param password: str. Account password.
     :return: None or str. None if valid else error message.
     """
-    uconfig = json.load(UCONFIG_PATH)   # uconfig are username-hash(password) pairs
+    if os.path.exists(UCONFIG_PATH):
+        with open(UCONFIG_PATH, 'r') as fr:
+            uconfig = json.load(fr)   # uconfig are username-hash(password) pairs
+            # if account name conflict
+            if account in uconfig.keys():
+                return "Username has already been used."
+            fr.close()
+    else:
+        uconfig = {}
 
-    # if account name conflict
-    if account in uconfig.keys():
-        return "Username has already been used."
-
-    # set username-hash(password) pairs
-    uconfig[account] = hash(password)
-    with open(UCONFIG_PATH, 'w') as f:
-        json.dump(uconfig, f)
+    with open(UCONFIG_PATH, 'w') as fw:
+        # set username-hash(password) pairs
+        hashstr = hashlib.md5()
+        hashstr.update(password.encode('utf-8'))
+        uconfig[account] = hashstr.hexdigest()
+        json.dump(uconfig, fw)
+        fw.close()
 
     # create home directory 'ROOT_DIR/account'
     os.mkdir(os.path.join(ROOT_DIR, account))
@@ -94,6 +106,8 @@ def get_files(account: str, path: str) -> 'list':
     """
     user_root = userpath2abspath(account, '/')
     filenames = sorted(os.listdir(path))
+
+    print(user_root)
 
     files = []
     for name in filenames:
@@ -223,7 +237,7 @@ def userpath2abspath(account: str, fpath: str) -> str:
     """converting user-view path to absolute path
     '/xxx' ---> 'ROOT_DIR/username/xxx'
     """
-    return ROOT_DIR + account + fpath
+    return ROOT_DIR.rstrip('/') + '/' + account + fpath
 
 
 def get_dir_size(fdir: str) -> str:
