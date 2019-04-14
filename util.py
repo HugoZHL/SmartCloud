@@ -140,15 +140,22 @@ def make_new_folder(account: str, filepath: str, new_folder: str) -> None or str
     return None
 
 
-# 给一个account可见的filepath（一个文件夹），返回该文件夹的绝对路径
-def get_dir(account: str, filepath: str) -> 'str':
-    pass
-
-
 # files 是个list，每个元素有filename属性和save(path)方法
 # 具体详见https://www.jb51.net/article/62606.htm
 def save_files(account: str, filepath: str, files) -> 'None':
-    pass
+    """ Save files under a given folder.
+
+    :param account: str. Account username.
+    :param filepath: str. Current file path (user-view).
+    :param files: list. A list of saving files.
+    :return: None or str. None if succeed else error message.
+    """
+    abspath = userpath2abspath(account, filepath)
+
+    for f in files:
+        save_path = os.path.join(abspath, f.filename)
+        f.save(save_path)
+    return None
 
 
 # 将filepath的文件（夹）名字改成target
