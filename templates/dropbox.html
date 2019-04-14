@@ -126,7 +126,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!--<h4 class="modal-title" id="myModalLabel">Browse</h4>-->
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         Close
                     </button>
@@ -261,8 +260,6 @@
                             </a>
                         </div>
                         <div class="col-md-4">
-                            <!--<a href="{{ url_for('delete_file', path=file['name']) }}"\-->
-                            <!--onclick="return window.confirm('Are you sure to delete file/dir: {{ file['name'] }} ?')">-->
                             <a href="#" data-toggle="modal" data-target="#myModalDelete"\
                                data-title="Are you sure to delete file/dir: '{{ file['name'] }}' ?"\
                                data-path="{{ url_for('delete_file', path=file['name']) }}">
