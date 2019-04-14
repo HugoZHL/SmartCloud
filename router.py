@@ -1,5 +1,6 @@
 from flask import *
 from util import *
+import os
 
 app = Flask(__name__)
 
@@ -25,6 +26,7 @@ def homepage():
 
 
 @app.route("/dropbox", methods=['GET', 'POST'])
+@app.route("/dropbox/", methods=['GET', 'POST'])
 @app.route("/dropbox/<path>", methods=['GET', 'POST'])
 def dropbox(path=None):
     searching = None
@@ -53,21 +55,39 @@ def new_folder():
     return redirect('/dropbox')
 
 
+@app.route("/upload_file", methods=['POST'])
+def upload_file():
+    path = request.cookies['filepath']
+    files = request.files.getlist('file')
+    save_files(request.cookies['account'], path, files)
+    print('new file: ')
+    return redirect('/dropbox')
+
+
+@app.route("/download_file/<path>", methods=['POST'])
+def download_file(path):
+    filename = path
+    filedir = get_dir(request.cookies['account'], request.cookies['filepath'])
+    print('downloading from: '+filedir+' '+filename)
+    return send_from_directory(filedir, filename, as_attachment=True)
+
+
 @app.route("/rename_file/<path>", methods=['POST'])
 def rename_file(path):
-    path = '/'+path
+    path = join_path(request.cookies['filepath'], path)
     target = request.form['naming']
     print('rename '+path+' to '+target)
     rename_at_server(request.cookies['account'], path, target)
     return redirect('/dropbox')
 
 
-@app.route("/delete_file/<path>")
+@app.route("/delete_file/<path>", methods=['POST'])
 def delete_file(path):
-    path = '/'+path
+    path = join_path(request.cookies['filepath'], path)
     print('delete '+path)
     delete_from_server(request.cookies['account'], path)
     return redirect('/dropbox')
+
 
 
 
