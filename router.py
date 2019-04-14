@@ -1,14 +1,17 @@
 from flask import *
 from util import *
-import os
 
 app = Flask(__name__)
 
 
+# 按照linux路径命名规则编写
+
+# helper 用于路径的join
 def join_path(root, file):
     return root.rstrip('/')+'/'+file
 
 
+# 首页，用于登陆
 @app.route("/", methods=['GET', 'POST'])
 def homepage():
     error = None
@@ -25,6 +28,7 @@ def homepage():
     return resp
 
 
+# 主要显示页面，后续所有的显示页面都在这里
 @app.route("/dropbox", methods=['GET', 'POST'])
 @app.route("/dropbox/", methods=['GET', 'POST'])
 @app.route("/dropbox/<path>", methods=['GET', 'POST'])
@@ -33,7 +37,8 @@ def dropbox(path=None):
     account = request.cookies['account']
     if request.method == 'POST':
         searching = request.form['searching']
-        files = search_files(account, searching)
+        files = search_files(account, str(searching))
+        print('searching: '+searching)
         filepath = '/'
     else:
         filepath = request.cookies['filepath']
@@ -47,6 +52,7 @@ def dropbox(path=None):
     return resp
 
 
+# 创建文件夹的功能性url，之后会返回dropbox
 @app.route("/new_folder", methods=['POST'])
 def new_folder():
     folder_name = request.form['naming']
@@ -55,6 +61,7 @@ def new_folder():
     return redirect('/dropbox')
 
 
+# 上传文件的功能性url，之后会返回dropbox
 @app.route("/upload_file", methods=['POST'])
 def upload_file():
     path = request.cookies['filepath']
@@ -64,6 +71,7 @@ def upload_file():
     return redirect('/dropbox')
 
 
+# 下载文件的功能性url，之后会返回dropbox
 @app.route("/download_file/<path>", methods=['POST'])
 def download_file(path):
     filename = path
@@ -72,6 +80,7 @@ def download_file(path):
     return send_from_directory(filedir, filename, as_attachment=True)
 
 
+# 重命名文件的功能性url，之后会返回dropbox
 @app.route("/rename_file/<path>", methods=['POST'])
 def rename_file(path):
     path = join_path(request.cookies['filepath'], path)
@@ -81,6 +90,7 @@ def rename_file(path):
     return redirect('/dropbox')
 
 
+# 删除文件的功能性url，之后会返回dropbox
 @app.route("/delete_file/<path>", methods=['POST'])
 def delete_file(path):
     path = join_path(request.cookies['filepath'], path)

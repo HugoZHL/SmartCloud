@@ -67,7 +67,7 @@
                 <div class="modal-body">
                     <h3>  </h3>
                     <input name="naming" type="text" class="form-control"\
-                           oninput = "value=value.replace(/[^_a-zA-Z0-9]/g,'')"\
+                           oninput = 'value=value.replace(/[\\\\/:*?\"<>|]/g,"")'\
                            placeholder="File/Dir Name" required autofocus/>
                 </div>
                 <div class="modal-footer">
@@ -168,6 +168,10 @@
     </div>
 </nav>
 
+<form action="" method="post" class="postingfroma">
+    <input type="hidden"/>
+</form>
+
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="container" style="margin-top:1vw">
     <div class="jumbotron">
@@ -243,13 +247,17 @@
                 <div class="col-md-2">
                     <div class="row">
                         <div class="col-md-4">
-                            <form id="a_post" method="post" action="{{ url_for('download_file', path=file['name']) }}">
+                            {% if file['type'] != 'dir' %}
+                            <!--<form id="a_post" method="post" action="">-->
                                 <input type="hidden"/>
-                                <a href="#" onclick="document.getElementById('a_post').submit();">
+                                <!--<a href="#" onclick="document.getElementById('a_post').submit();"\-->
+                                   <!--data-path="{{ url_for('download_file', path=file['name']) }}">-->
+                                <a class="posting" href="{{ url_for('download_file', path=file['name']) }}">
                                     <img src="{{ url_for('static', filename='images/download.png') }}"\
                                          height="25" width="27"/>
                                 </a>
-                            </form>
+                            <!--</form>-->
+                            {% endif %}
                         </div>
                         <div class="col-md-4">
                             <a href="#" data-toggle="modal" data-target="#myModalNaming"\
@@ -293,6 +301,15 @@
     }
     $('#myModalNaming').on('show.bs.modal', handler)
     $('#myModalDelete').on('show.bs.modal', handler)
+
+    $(function() {
+        $('.posting').click(function() {
+            var href = $(this).attr('href')
+            $('.postingfroma').attr('action', href).submit()
+            return false
+        })
+    })
+
 </script>
 
 </body>

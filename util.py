@@ -4,11 +4,12 @@ import json
 import time
 import shutil
 import hashlib
+from werkzeug.utils import secure_filename
 
 # System root directory
 # make sure file operations needs no 'sudo' under this directory
 # keep last character be '/'
-ROOT_DIR = '/home'    # FIXME : change this if necessary
+ROOT_DIR = '../test/'    # FIXME : change this if necessary
 UCONFIG_PATH = os.path.join(ROOT_DIR, 'uconfig.json')
 
 
@@ -104,14 +105,12 @@ def get_files(account: str, path: str) -> 'list':
         }
         ]
     """
-    user_root = userpath2abspath(account, '/')
-    filenames = sorted(os.listdir(path))
-
-    print(user_root)
+    abspath = userpath2abspath(account, path)
+    filenames = sorted(os.listdir(abspath))
 
     files = []
     for name in filenames:
-        fpath = os.path.join(user_root, path, name)
+        fpath = os.path.join(abspath, name)
         info = get_file_info(fpath)
         files.append(info)
 
@@ -128,13 +127,14 @@ def search_files(account: str, search: str) -> 'list':
     """
     user_root = userpath2abspath(account, '/')
 
-    files = []
+
+    result_files = []
     for root, dirs, files in os.walk(user_root):
         for name in dirs + files:
             if search in name:
                 info = get_file_info(os.path.join(root, name))
-                files.append(info)
-    return files
+                result_files.append(info)
+    return result_files
 
 
 def make_new_folder(account: str, filepath: str, new_folder: str) -> None or str:
@@ -172,7 +172,7 @@ def save_files(account: str, filepath: str, files) -> 'None':
     abspath = userpath2abspath(account, filepath)
 
     for f in files:
-        save_path = os.path.join(abspath, f.filename)
+        save_path = os.path.join(abspath, secure_filename(f.filename))
         f.save(save_path)
     return None
 
@@ -230,6 +230,8 @@ def abspath2userpath(fpath: str) -> str:
     """converting absolute path to user-view path
     'ROOT_DIR/username/xxx' ---> '/xxx'
     """
+    fpath = fpath[len(ROOT_DIR):]
+    fpath = '/'.join(fpath.split('/')[1:])
     return '/' + fpath[len(ROOT_DIR):]
 
 
@@ -261,6 +263,14 @@ def get_file_info(fpath: str) -> dict:
 
     # get file size
     fsize = os.path.getsize(fpath) # directory size will always be 4K
+    if fsize < 1024:
+        fsize = str(fsize)+' B'
+    elif fsize < 1024*1024:
+        fsize = str(round(fsize/1024, 2))+' KB'
+    elif fsize < 1024**3:
+        fsize = str(round(fsize/1024**2, 2))+' MB'
+    else:
+        fsize = str(round(fsize/1024**3, 2))+' GB'
 
     # get file modify time
     ftime = timestamp2time(os.path.getmtime(fpath))
