@@ -153,7 +153,7 @@
             {% if not searching %}
             <a class="navbar-brand" href="{{ url_for('dropbox', path=':upper') }}">UpperDir</a>
             <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalNaming"\
-               data-title="Naming new folder:" data-path="{{ url_for('new_folder') }}">
+               data-title="Naming new folder:" data-path="{{ url_for('new_folder') }}" data-name="">
                 NewFolder
             </a>
             <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalFile">NewFile</a>
@@ -271,7 +271,8 @@
                         <div class="col-md-4">
                             <a href="#" data-toggle="modal" data-target="#myModalNaming"\
                                data-title="Renaming file/dir '{{ file['name'] }}' into:"\
-                               data-path="{{ url_for('rename_file', path=file['name']) }}">
+                               data-path="{{ url_for('rename_file', path=file['name']) }}"\
+                               data-name="{{ file['name'] }}">
                                 <img src="{{ url_for('static', filename='images/rename.png') }}"\
                                      height="25" width="25"/>
                             </a>
@@ -304,9 +305,11 @@
         var button = $(event.relatedTarget)
         var url = button.data('path')
         var title = button.data('title')
+        var valuename = button.data('name')
         var modal = $(this)
         modal.find('.modal-body h3').text(title)
         modal.find('.modal-content').find('form').attr("action", url)
+        modal.find('input').attr("value", valuename)
     }
     $('#myModalNaming').on('show.bs.modal', handler)
     $('#myModalDelete').on('show.bs.modal', handler)

@@ -170,11 +170,13 @@ def save_files(account: str, filepath: str, files) -> 'None':
     :return: None or str. None if succeed else error message.
     """
     abspath = userpath2abspath(account, filepath)
-
+    error = None
     for f in files:
         save_path = os.path.join(abspath, secure_filename(f.filename))
+        if os.path.exists(save_path):
+            error = 'Covering original files with the same name.'
         f.save(save_path)
-    return None
+    return error
 
 
 # 将filepath的文件（夹）名字改成target
@@ -196,7 +198,7 @@ def rename_at_server(account: str, filepath: str, target: str) -> None or str:
 
     # check validity
     if '/' in target:
-        return "Filename cannot contain '/'."
+        return "Filename cannot contain special characters."
 
     new_path = os.path.join(pardir, target)
     os.rename(abspath, new_path)

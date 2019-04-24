@@ -25,6 +25,7 @@ def homepage():
     resp = make_response(render_template('homepage.html', error=error))
     resp.set_cookie('account', '', max_age=0)
     resp.set_cookie('filepath', '')
+    print('Visiting homepage of SmartCloud.')
     return resp
 
 
@@ -38,7 +39,7 @@ def dropbox(path=None):
     if request.method == 'POST':
         searching = request.form['searching']
         files = search_files(account, str(searching))
-        print('searching: '+searching)
+        print('Searching: '+searching)
         filepath = '/'
     else:
         filepath = request.cookies['filepath']
@@ -56,7 +57,7 @@ def dropbox(path=None):
     resp = make_response(render_template('dropbox.html', account=account, filepath=filepath,\
                                          files=files, searching=searching))
     resp.set_cookie('filepath', filepath)
-    print(account, filepath)
+    print('Visiting user: '+account+', filepath: '+filepath)
     return resp
 
 
@@ -65,7 +66,7 @@ def dropbox(path=None):
 def new_folder():
     folder_name = request.form['naming']
     print('Make new folder: '+folder_name)
-    make_new_folder(request.cookies['account'], request.cookies['filepath'], folder_name)
+    error = make_new_folder(request.cookies['account'], request.cookies['filepath'], folder_name)
     return redirect('/dropbox')
 
 
@@ -74,8 +75,8 @@ def new_folder():
 def upload_file():
     path = request.cookies['filepath']
     files = request.files.getlist('file')
-    save_files(request.cookies['account'], path, files)
-    print('new file: ')
+    error = save_files(request.cookies['account'], path, files)
+    print('Upload new file.')
     return redirect('/dropbox')
 
 
@@ -84,7 +85,7 @@ def upload_file():
 def download_file(path):
     filename = path
     filedir = get_dir(request.cookies['account'], request.cookies['filepath'])
-    print('downloading from: '+filedir+' '+filename)
+    print('Downloading from: '+filedir+' '+filename)
     return send_from_directory(filedir, filename, as_attachment=True)
 
 
@@ -93,8 +94,8 @@ def download_file(path):
 def rename_file(path):
     path = join_path(request.cookies['filepath'], path)
     target = request.form['naming']
-    print('rename '+path+' to '+target)
-    rename_at_server(request.cookies['account'], path, target)
+    print('Rename '+path+' to '+target)
+    error = rename_at_server(request.cookies['account'], path, target)
     return redirect('/dropbox')
 
 
@@ -102,6 +103,6 @@ def rename_file(path):
 @app.route("/delete_file/<path>", methods=['POST'])
 def delete_file(path):
     path = join_path(request.cookies['filepath'], path)
-    print('delete '+path)
-    delete_from_server(request.cookies['account'], path)
+    print('Delete '+path)
+    error = delete_from_server(request.cookies['account'], path)
     return redirect('/dropbox')
