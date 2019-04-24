@@ -230,9 +230,9 @@ def abspath2userpath(fpath: str) -> str:
     """converting absolute path to user-view path
     'ROOT_DIR/username/xxx' ---> '/xxx'
     """
-    fpath = fpath[len(ROOT_DIR):]
+    fpath = fpath[len(ROOT_DIR):].lstrip('/')
     fpath = '/'.join(fpath.split('/')[1:])
-    return '/' + fpath[len(ROOT_DIR):]
+    return '/' + fpath
 
 
 def userpath2abspath(account: str, fpath: str) -> str:
@@ -316,5 +316,4 @@ def secure_filename(filename):
     if os.name == 'nt' and filename and \
        filename.split('.')[0].upper() in _windows_device_files:
         filename = '_' + filename
-
     return filename

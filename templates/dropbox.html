@@ -151,6 +151,7 @@
             <div class="navbar-brand">User: {{ account }}</div>
             <a class="navbar-brand" href="{{ url_for('dropbox', path=':root') }}">RootDir</a>
             {% if not searching %}
+            <a class="navbar-brand" href="{{ url_for('dropbox', path=':upper') }}">UpperDir</a>
             <a href="#" class="navbar-brand" data-toggle="modal" data-target="#myModalNaming"\
                data-title="Naming new folder:" data-path="{{ url_for('new_folder') }}">
                 NewFolder
@@ -239,9 +240,15 @@
                 <div class="col-md-2">
                     <p>{{ file['type'] }}</p>
                 </div>
+                {% if file['type'] != 'dir' %}
                 <div class="col-md-2">
                     <p>{{ file['size'] }}</p>
                 </div>
+                {% else %}
+                <div class="col-md-2">
+                    <p>-</p>
+                </div>
+                {% endif %}
                 <div class="col-md-3">
                     <p>{{ file['time'] }}</p>
                 </div>

@@ -43,7 +43,12 @@ def dropbox(path=None):
     else:
         filepath = request.cookies['filepath']
         if path:
-            filepath = '/' if path == ':root' else join_path(filepath, path)
+            if path == ':root':
+                filepath = '/'
+            elif path == ':upper':
+                filepath = '/'.join(str(filepath).split('/')[:-1]) if filepath != '/' else '/'
+            else:
+                filepath = join_path(filepath, path)
         files = get_files(account, filepath)
     resp = make_response(render_template('dropbox.html', account=account, filepath=filepath,\
                                          files=files, searching=searching))
