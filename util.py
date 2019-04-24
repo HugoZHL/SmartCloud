@@ -1,10 +1,10 @@
 # for functions
 import os
+import re
 import json
 import time
 import shutil
 import hashlib
-from werkzeug.utils import secure_filename
 
 # System root directory
 # make sure file operations needs no 'sudo' under this directory
@@ -293,3 +293,28 @@ def get_file_info(fpath: str) -> dict:
         'folder': ffolder
     }
     return info
+
+
+def secure_filename(filename):
+    text_type = str
+    if isinstance(filename, text_type):
+        from unicodedata import normalize
+        filename = normalize('NFKD', filename).encode('utf-8', 'ignore')
+        filename = filename.decode('utf-8')
+    for sep in os.path.sep, os.path.altsep:
+        if sep:
+            filename = filename.replace(sep, ' ')
+    _filename_ascii_strip_re = re.compile(r'[^A-Za-z0-9\u4E00-\u9FA5_.-]')
+    filename = str(_filename_ascii_strip_re.sub('', '_'.join(
+                   filename.split()))).strip('._')
+
+    # on nt a couple of special files are present in each folder.  We
+    # have to ensure that the target file is not such a filename.  In
+    # this case we prepend an underline
+    _windows_device_files = ('CON', 'AUX', 'COM1', 'COM2', 'COM3', 'COM4', 'LPT1',
+                             'LPT2', 'LPT3', 'PRN', 'NUL')
+    if os.name == 'nt' and filename and \
+       filename.split('.')[0].upper() in _windows_device_files:
+        filename = '_' + filename
+
+    return filename
