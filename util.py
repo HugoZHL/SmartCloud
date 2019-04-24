@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 # System root directory
 # make sure file operations needs no 'sudo' under this directory
 # keep last character be '/'
-ROOT_DIR = '../test/'    # FIXME : change this if necessary
+ROOT_DIR = 'test/'    # FIXME : change this if necessary
 UCONFIG_PATH = os.path.join(ROOT_DIR, 'uconfig.json')
 
 
