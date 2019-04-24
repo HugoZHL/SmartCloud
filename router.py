@@ -50,7 +50,7 @@ def dropbox(path=None):
                 if filepath == '':
                     filepath = '/'
             else:
-                filepath = str(filepath).replace(':', '/')
+                path = str(path).replace(':', '/')
                 filepath = join_path(filepath, path)
         files = get_files(account, filepath)
     resp = make_response(render_template('dropbox.html', account=account, filepath=filepath,\
