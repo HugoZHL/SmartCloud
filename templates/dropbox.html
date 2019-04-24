@@ -208,7 +208,7 @@
             <hr/>
             {% for file in files %}
             {% if searching %}
-            <a href="{{ url_for('dropbox', path=file['folder'][1:]) }}">
+            <a href="{{ url_for('dropbox', path=file['folder'][1:].replace('/', '*')) }}">
                 <h4>Path: {{ file['folder'] }}</h4>
             </a>
             {% endif %}

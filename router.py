@@ -47,7 +47,10 @@ def dropbox(path=None):
                 filepath = '/'
             elif path == ':upper':
                 filepath = '/'.join(str(filepath).split('/')[:-1]) if filepath != '/' else '/'
+                if filepath == '':
+                    filepath = '/'
             else:
+                filepath = str(filepath).replace('*', '/')
                 filepath = join_path(filepath, path)
         files = get_files(account, filepath)
     resp = make_response(render_template('dropbox.html', account=account, filepath=filepath,\
