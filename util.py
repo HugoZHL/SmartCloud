@@ -78,7 +78,7 @@ def synchronize(account: str) -> None:
     :param account: str. Account username.
     :return: None.
     """
-    subprocess.Popen(args=['sh', 'sync.sh', account], shell=True)
+    subprocess.Popen(args=['sh', 'sync.sh', account], shell=False)
     
     return None 
 
