@@ -5,6 +5,7 @@ import json
 import time
 import shutil
 import hashlib
+import subprocess
 
 # System root directory
 # make sure file operations needs no 'sudo' under this directory
@@ -77,7 +78,7 @@ def synchronize(account: str) -> None:
     :param account: str. Account username.
     :return: None.
     """
-    os.system('sh sync.sh ' + account)
+    subprocess.Popen(args=['sh', 'sync.sh', account], shell=True)
     
     return None 
 
