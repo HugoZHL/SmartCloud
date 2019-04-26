@@ -18,6 +18,9 @@ def homepage():
     if request.method == 'POST':
         error = valid_login(request.form['account'], request.form['password'])
         if not error:
+            print("work here1")
+            synchronize(request.form['account'])
+            print("work here2")
             resp = make_response(redirect('/dropbox'))
             resp.set_cookie('account', request.form['account'], max_age=3600)
             resp.set_cookie('filepath', '/')

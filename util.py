@@ -71,6 +71,15 @@ def register(account: str, password: str) -> 'str' or None:
     os.mkdir(os.path.join(ROOT_DIR, account))
     return None
 
+def synchronize(account: str) -> None:
+    """Synchronize nas: pull to current nas
+	
+    :param account: str. Account username.
+    :return: None.
+    """
+    os.system('sh sync.sh ' + account)
+    
+    return None 
 
 ####################################################################
 #                       main file operations                       #
