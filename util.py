@@ -70,11 +70,12 @@ def register(account: str, password: str) -> 'str' or None:
 
     # create home directory 'ROOT_DIR/account'
     os.mkdir(os.path.join(ROOT_DIR, account))
+    os.mkdir(os.path.join(ROOT_DIR, account, 'sync-folder'))
     return None
+
 
 def synchronize(account: str) -> None:
     """Synchronize nas: pull to current nas
-	
     :param account: str. Account username.
     :return: None.
     """

@@ -269,6 +269,7 @@
                             {% endif %}
                         </div>
                         <div class="col-md-4">
+                            {% if file['name'] != 'sync-folder' %}
                             <a href="#" data-toggle="modal" data-target="#myModalNaming"\
                                data-title="Renaming file/dir '{{ file['name'] }}' into:"\
                                data-path="{{ url_for('rename_file', path=file['name']) }}"\
@@ -276,14 +277,17 @@
                                 <img src="{{ url_for('static', filename='images/rename.png') }}"\
                                      height="25" width="25"/>
                             </a>
+                            {% endif %}
                         </div>
                         <div class="col-md-4">
+                            {% if file['name'] != 'sync-folder' %}
                             <a href="#" data-toggle="modal" data-target="#myModalDelete"\
                                data-title="Are you sure to delete file/dir: '{{ file['name'] }}' ?"\
                                data-path="{{ url_for('delete_file', path=file['name']) }}">
                                 <img src="{{ url_for('static', filename='images/delete.png') }}"\
                                      height="25" width="25"/>
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
