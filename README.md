@@ -21,6 +21,7 @@
 * To register new users: run the **register.py** script (-h flag for help).
 * To implement deployment and intranet penetration: https://blog.csdn.net/qq_37289362/article/details/91324974 .
 * To implement synchronization: https://blog.csdn.net/zpf336/article/details/51659666 .
+* Have a try: modify the root dir in **util.py**, register some users, run the server, and use your username to login in!
 
 ## Demos
 
