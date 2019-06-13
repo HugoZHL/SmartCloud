@@ -18,6 +18,7 @@ def homepage():
     if request.method == 'POST':
         error = valid_login(request.form['account'], request.form['password'])
         if not error:
+            ### change following comments into codes to implement synchronization
             # print("Start synchronization...")
             # synchronize(request.form['account'])
             # print("Synchronization finished.")
