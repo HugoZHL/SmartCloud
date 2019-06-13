@@ -25,16 +25,12 @@
 
 ## Demos
 
-![image](./static/images/demo.gif)
-
- 
-
 Here shows some of the operations.
 
 * Type the correct username and password to login:![](./static/images/login.PNG)
 * In dropbox page, one can choose buttons in operations column (**download**, **rename**, **delete**), on the navigation bar (**go back to root directory**, **go back to upper directory**, **make new folder**, **upload new file**, **signout**), or before every folder name (**go into folder**). Users can also **search** for files or folders by name in the search area. ![](./static/images/dropbox.PNG)
 * When searching for specific files or folders, one can dive into their upper directory. ![](./static/images/searching.PNG)
-* If using synchronization, every user will have a sync-folder in root directory, which cannot be deleted. Every file and folders saved in sync-folder on another server will be synchronized to this server when logining in.
+* If using synchronization, every user will have a sync-folder in root directory, which cannot be deleted. Every file and folders saved in sync-folder on another server will be synchronized to this server when logining in. ![](./static/images/demo.gif)
 
 ## Contributions
 
