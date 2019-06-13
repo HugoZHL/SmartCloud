@@ -25,9 +25,9 @@
 
 ## Demos
 
-<video id="video" controls="" preload="none">
-    <source id="mp4" src="./static/images/demo.mp4" type="video/mp4">
-</video>
+![image](./static/images/demo.gif)
+
+ 
 
 Here shows some of the operations.
 
