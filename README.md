@@ -25,6 +25,10 @@
 
 ## Demos
 
+<video id="video" controls="" preload="none">
+    <source id="mp4" src="./static/images/demo.mp4" type="video/mp4">
+</video>
+
 Here shows some of the operations.
 
 * Type the correct username and password to login:![](./static/images/login.PNG)
